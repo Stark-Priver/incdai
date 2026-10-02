@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://incdai.incpritech.com/protocol/node-manifest.schema.json",
+  "title": "incdai Node Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["protocol", "node", "capabilities", "endpoints"],
+  "properties": {
+    "protocol": { "const": "incdai-node/1" },
+    "node": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "operator"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{1,63}$" },
+        "name": { "type": "string", "minLength": 1, "maxLength": 100 },
+        "operator": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "region": { "type": "string", "maxLength": 80 },
+        "url": { "type": "string", "format": "uri", "pattern": "^https://" }
+      }
+    },
+    "capabilities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["chat", "languages"],
+      "properties": {
+        "chat": { "type": "boolean" },
+        "voiceInput": { "type": "boolean" },
+        "voiceOutput": { "type": "boolean" },
+        "languages": { "type": "array", "items": { "type": "string", "pattern": "^[a-z]{2}(-[A-Z]{2})?$" }, "uniqueItems": true },
+        "privacy": { "enum": ["local", "private", "operator-managed"] }
+      }
+    },
+    "endpoints": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["api"],
+      "properties": {
+        "api": { "type": "string", "format": "uri", "pattern": "^https://" },
+        "websocket": { "type": "string", "format": "uri", "pattern": "^wss://" }
+      }
+    }
+  }
+}
