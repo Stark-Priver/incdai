@@ -26,6 +26,7 @@ The response is `text/event-stream`. Token events contain `{"type":"token","text
 - `POST /transcribe` accepts a supported audio body and returns recognized text and language.
 - `POST /speak` accepts text, language, and an optional voice, and returns audio.
 - `/live` upgrades to a WebSocket for a continuous voice session.
+- A live `speak` event may include `speech`, a pronunciation-safe rendering for device text-to-speech. Display `text`; speak `speech` when present.
 
 Clients must treat voice availability as a capability and provide a text or device-speech fallback.
 

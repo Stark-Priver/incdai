@@ -189,7 +189,7 @@ export class LiveSession {
       // sentences the server can't voice (e.g. Swahili) are read by the device's own voice
       case "speak":
         this._format = ev.audio ? ev.format || "pcm" : this._format;
-        if (!ev.audio && this.options.speak !== "none" && this.options.playback) this._say(ev.text, ev.language);
+        if (!ev.audio && this.options.speak !== "none" && this.options.playback) this._say(ev.speech || ev.text, ev.language);
         break;
       case "done":
         this._replying = false;
