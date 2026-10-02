@@ -16,7 +16,7 @@
         "name": { "type": "string", "minLength": 1, "maxLength": 100 },
         "operator": { "type": "string", "minLength": 1, "maxLength": 160 },
         "region": { "type": "string", "maxLength": 80 },
-        "url": { "type": "string", "format": "uri", "pattern": "^https://" }
+        "url": { "type": "string", "format": "uri", "pattern": "^(https://|http://(localhost|127\\.0\\.0\\.1)(:[0-9]+)?(/|$))" }
       }
     },
     "capabilities": {
@@ -36,8 +36,8 @@
       "additionalProperties": false,
       "required": ["api"],
       "properties": {
-        "api": { "type": "string", "format": "uri", "pattern": "^https://" },
-        "websocket": { "type": "string", "format": "uri", "pattern": "^wss://" }
+        "api": { "type": "string", "format": "uri", "pattern": "^(https://|http://(localhost|127\\.0\\.0\\.1)(:[0-9]+)?(/|$))" },
+        "websocket": { "type": "string", "format": "uri", "pattern": "^(wss://|ws://(localhost|127\\.0\\.0\\.1)(:[0-9]+)?(/|$))" }
       }
     }
   }
