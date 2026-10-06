@@ -308,7 +308,14 @@ export class LiveSession {
     if (!isBrowser) throw new Error("incdai: startMicrophone() needs a browser. In other runtimes, call sendAudio() with 16 kHz PCM.");
     this._ensureAudio();
     const ctx = this._audio.ctx;
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true, channelCount: 1 } });
+    // clean voice only: the browser's echo cancellation, noise suppression and (where supported) voice isolation
+    const clean = { echoCancellation: true, noiseSuppression: true, autoGainControl: true, voiceIsolation: true, channelCount: 1 };
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: clean });
+    const track = stream.getAudioTracks()[0];
+    const got = track?.getSettings?.() || {};
+    if (track && (got.noiseSuppression === false || got.echoCancellation === false)) {
+      await track.applyConstraints({ echoCancellation: { exact: true }, noiseSuppression: { exact: true } }).catch(() => {});
+    }
     const worklet = `class C extends AudioWorkletProcessor{process(i){const c=i[0]&&i[0][0];if(c)this.port.postMessage(c.slice(0));return true}}registerProcessor("incdai-capture",C)`;
     const url = URL.createObjectURL(new Blob([worklet], { type: "application/javascript" }));
     await ctx.audioWorklet.addModule(url);
@@ -316,7 +323,9 @@ export class LiveSession {
     const src = ctx.createMediaStreamSource(stream);
     const node = new AudioWorkletNode(ctx, "incdai-capture");
     const mute = ctx.createGain(); mute.gain.value = 0;
-    src.connect(node); node.connect(mute); mute.connect(ctx.destination);
+    // drop rumble, hum and wind below the voice before it is sent (the server cleans the rest)
+    const hp = ctx.createBiquadFilter(); hp.type = "highpass"; hp.frequency.value = 90;
+    src.connect(hp); hp.connect(node); node.connect(mute); mute.connect(ctx.destination);
     const ratio = ctx.sampleRate / IN_RATE, frame = IN_RATE * 0.04;   // send 40 ms frames
     let acc = [], pos = 0, carry = new Float32Array(0);
     node.port.onmessage = ({ data }) => {
@@ -338,13 +347,13 @@ export class LiveSession {
         acc = [];
       }
     };
-    this._mic = { stream, src, node };
+    this._mic = { stream, src, hp, node };
   }
 
   stopMicrophone() {
     if (!this._mic) return;
     this._mic.node.port.onmessage = null;
-    try { this._mic.src.disconnect(); this._mic.node.disconnect(); } catch {}
+    try { this._mic.src.disconnect(); this._mic.hp.disconnect(); this._mic.node.disconnect(); } catch {}
     this._mic.stream.getTracks().forEach((t) => t.stop());
     this._mic = null;
   }
