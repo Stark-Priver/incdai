@@ -54,6 +54,9 @@ def main(argv: list[str] | None = None) -> int:
                              barge_in=args.barge_in, language=args.language))
     except KeyboardInterrupt:
         return 130
+    except BrokenPipeError:   # output piped into head/less that closed early
+        os.dup2(os.open(os.devnull, os.O_WRONLY), sys.stdout.fileno())
+        return 0
     except IncdaiError as e:
         print(f"incdai: {e}", file=sys.stderr)
         return 1
