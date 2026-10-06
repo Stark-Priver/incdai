@@ -1,4 +1,4 @@
-/*! incdai public SDK v0.6.0 · Copyright 2026 INCPRITECH · PolyForm Perimeter 1.0.1
+/*! incdai public SDK v0.6.1 · Copyright 2026 INCPRITECH · PolyForm Perimeter 1.0.1
  * Use a incdai assistant from any software: browsers, Node.js 22+, Deno, Bun, workers.
  *
  *   import { Incdai } from "https://api.incdai.incpritech.com/sdk.js";
