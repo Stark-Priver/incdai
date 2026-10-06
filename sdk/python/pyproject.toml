@@ -1,0 +1,42 @@
+[build-system]
+requires = ["hatchling>=1.24"]
+build-backend = "hatchling.build"
+
+[project]
+name = "incdai"
+version = "0.6.1"
+description = "Public Python SDK for incdai: chat and real-time voice with incdai Public or an incdai Node, in English and Swahili."
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+authors = [{ name = "INCPRITECH", email = "info@incpritech.com" }]
+keywords = ["incdai", "assistant", "voice", "swahili", "sdk", "incpritech"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "License :: Other/Proprietary License",
+  "Natural Language :: English",
+  "Programming Language :: Python :: 3",
+  "Topic :: Communications :: Chat",
+  "Topic :: Multimedia :: Sound/Audio :: Speech",
+]
+dependencies = ["httpx>=0.27", "websockets>=12"]
+
+[project.optional-dependencies]
+audio = ["sounddevice>=0.4"]   # microphone/speaker for `incdai talk` without PulseAudio/ALSA tools
+voice = ["miniaudio>=1.59"]    # play MP3 voices (Swahili) without ffmpeg
+all = ["sounddevice>=0.4", "miniaudio>=1.59"]
+
+[project.scripts]
+incdai = "incdai.cli:main"
+
+[project.urls]
+Homepage = "https://incdai.incpritech.com"
+Documentation = "https://incdai.incpritech.com/docs"
+Source = "https://github.com/Stark-Priver/incdai"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/incdai"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src/incdai", "README.md", "LICENSE", "pyproject.toml"]

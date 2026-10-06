@@ -20,7 +20,7 @@ The managed service is one convenient node, not the definition of the network. A
 
 This repository deliberately contains only the interoperability surface:
 
-- the browser and server JavaScript SDK;
+- the browser and server JavaScript SDK, and the Python SDK;
 - the embeddable website widget;
 - the incdai HTTP and live-voice protocol;
 - the incdai Node manifest schema;
@@ -55,6 +55,22 @@ for await (const text of assistant.stream("What services do you offer?")) {
 ```
 
 To use an authorized independent node, replace `api` with that node's HTTPS origin. See the [protocol overview](protocol/README.md).
+
+## Use the Python SDK
+
+```sh
+pip install incdai          # client only: chat and live voice over the public protocol
+```
+
+```python
+from incdai import Client
+
+bot = Client(site="your-site")
+for piece in bot.stream("Mnafungua saa ngapi?"):
+    print(piece, end="", flush=True)
+```
+
+`incdai ask "…" --site your-site` and `incdai talk --site your-site` work from the terminal. Source: [sdk/python](sdk/python).
 
 ## Decentralization principles
 
